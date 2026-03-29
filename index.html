@@ -116,7 +116,7 @@
 <div class="container">
     <!-- TELA 1: HOME -->
     <div id="screen-home" class="screen active">
-        <h1>Luxe Analysis</h1>
+        <h1>SdMobile Analysis</h1>
         <p class="termux-req">NECESSITA DO TERMUX INSTALADO</p>
         <button class="btn-scan" onclick="startAnalysis()">Analisar Dispositivo</button>
     </div>
@@ -187,7 +187,7 @@
         const countdown = setInterval(() => {
             timeLeft--;
             if(timeLeft >= 0) {
-                timerText.innerText = `PC SENDO ANALISADO ( Tempo Estimado: ${timeLeft}s )`;
+                timerText.innerText = `ANALISE EM PROCESSO! ( Tempo Estimado: ${timeLeft}s )`;
             } else {
                 clearInterval(countdown);
             }

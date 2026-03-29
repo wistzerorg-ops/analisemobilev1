@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeCheats | Mobile Security</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --danger: #ff0044;
+            --success: #00ff88;
+            --bg: #08080c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Fundo Gamer Animado */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+            animation: move 5s linear infinite;
+        }
+
+        @keyframes move {
+            from { background-position: 0 0; }
+            to { background-position: 30px 30px; }
+        }
+
+        .container {
+            width: 85%;
+            max-width: 400px;
+            background: rgba(15, 15, 20, 0.95);
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
+        }
+
+        h1 { font-size: 1.4rem; color: var(--primary); text-transform: uppercase; margin-bottom: 5px; }
+        .termux-req { color: var(--danger); font-size: 0.75rem; font-weight: bold; margin-bottom: 25px; }
+
+        .btn-scan {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 15px 30px;
+            text-transform: uppercase;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-scan:active { background: var(--primary); color: black; }
+
+        /* Telas */
+        .screen { display: none; }
+        .active { display: block; }
+
+        /* Loading */
+        .loader {
+            width: 60px; height: 60px;
+            border: 4px solid #1a1a1a;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            margin: 20px auto;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .status-header { font-size: 0.9rem; color: var(--primary); margin-bottom: 15px; }
+        
+        /* Console Logs */
+        .console {
+            background: #000;
+            height: 140px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            text-align: left;
+            border: 1px solid #222;
+            color: #888;
+            overflow: hidden;
+        }
+
+        .log-entry { margin-bottom: 5px; }
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        /* Resultado */
+        .res-icon { font-size: 3rem; margin-bottom: 15px; }
+        .detected-box { border: 1px solid var(--danger); background: rgba(255, 0, 68, 0.1); padding: 15px; border-radius: 10px; }
+        .clean-box { border: 1px solid var(--success); background: rgba(0, 255, 136, 0.1); padding: 15px; border-radius: 10px; }
+    </style>
+</head>
+<body onclick="countTaps()">
+
+<div class="bg-grid"></div>
+
+<div class="container">
+    <!-- TELA 1: HOME -->
+    <div id="screen-home" class="screen active">
+        <h1>Luxe Analysis</h1>
+        <p class="termux-req">NECESSITA DO TERMUX INSTALADO</p>
+        <button class="btn-scan" onclick="startAnalysis()">Analisar Dispositivo</button>
+    </div>
+
+    <!-- TELA 2: SCANNING -->
+    <div id="screen-scan" class="screen">
+        <div class="loader"></div>
+        <p class="status-header" id="timer-text">PC SENDO ANALISADO ( Tempo Estimado: 10s )</p>
+        <div class="console" id="console"></div>
+    </div>
+
+    <!-- TELA 3: RESULTADO -->
+    <div id="screen-result" class="screen">
+        <div id="box-danger" class="screen">
+            <div class="res-icon">⚠️</div>
+            <div class="detected-box">
+                <h3 style="color: var(--danger)">CHEAT DETECTADO</h3>
+                <p style="font-size: 0.8rem; margin-top: 8px;">O arquivo <b>PAINEL 100% HS @luxecheats</b> foi localizado em uma pasta oculta do sistema.</p>
+            </div>
+        </div>
+
+        <div id="box-clean" class="screen">
+            <div class="res-icon">🛡️</div>
+            <div class="clean-box">
+                <h3 style="color: var(--success)">SISTEMA LIMPO</h3>
+                <p style="font-size: 0.8rem; margin-top: 8px;">Nenhuma modificação ou script de terceiros foi encontrado no Kernel do Android.</p>
+            </div>
+        </div>
+        
+        <button class="btn-scan" style="margin-top: 25px;" onclick="location.reload()">Reiniciar</button>
+    </div>
+</div>
+
+<script>
+    let taps = 0;
+    let isDetected = false;
+
+    // Função de contagem de toques (Gatilho)
+    function countTaps() {
+        taps++;
+        if (taps === 3) {
+            isDetected = true;
+            console.log("Gatilho ativado: O arquivo será detectado.");
+        }
+    }
+
+    const logPhrases = [
+        "Lendo Hardware...",
+        "Verificando permissões do Termux...",
+        "Executando Termux...",
+        "Acessando diretórios do sistema...",
+        "Analisando Sistema Ant Xit...",
+        "Buscando arquivos .sh suspensos...",
+        "Escaneando memória volátil...",
+        "Finalizando relatório..."
+    ];
+
+    async function startAnalysis() {
+        // Troca de tela
+        document.getElementById('screen-home').classList.remove('active');
+        document.getElementById('screen-scan').classList.add('active');
+
+        const consoleDiv = document.getElementById('console');
+        const timerText = document.getElementById('timer-text');
+        
+        // Timer de 10 segundos
+        let timeLeft = 10;
+        const countdown = setInterval(() => {
+            timeLeft--;
+            if(timeLeft >= 0) {
+                timerText.innerText = `PC SENDO ANALISADO ( Tempo Estimado: ${timeLeft}s )`;
+            } else {
+                clearInterval(countdown);
+            }
+        }, 1000);
+
+        // Ciclo de frases
+        for (let i = 0; i < logPhrases.length; i++) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerText = `> ${logPhrases[i]}`;
+            consoleDiv.appendChild(entry);
+            
+            // Auto-scroll do console
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            
+            // Delay entre frases
+            await new Promise(r => setTimeout(r, 1200));
+        }
+
+        finish();
+    }
+
+    function finish() {
+        document.getElementById('screen-scan').classList.remove('active');
+        document.getElementById('screen-result').classList.add('active');
+
+        if (isDetected) {
+            document.getElementById('box-danger').classList.add('active');
+        } else {
+            document.getElementById('box-clean').classList.add('active');
+        }
+    }
+</script>
+
+</body>
+</html>
